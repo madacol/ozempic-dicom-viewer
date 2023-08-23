@@ -74,7 +74,8 @@
 
                     // Read the file and store it in the unsortedSeriesData array, along with the filename
                     const promise = zipEntry.async('arraybuffer').then(function(content) {
-                        unsortedSeriesData[seriesIndex].push({ filename: filename, content: content });
+                        const fileData = { filename, content }
+                        unsortedSeriesData[seriesIndex].push(fileData);
                     });
                     promises.push(promise);
                 }
@@ -90,8 +91,10 @@
                             return a.filename.localeCompare(b.filename);
                         });
 
+                        const data = series.map(slice => slice.content)
+
                         // Create container and controls for this series
-                        createSeriesContainer(series.map(slice => slice.content));
+                        createSeriesContainer(data);
                     }
                 });
             });
