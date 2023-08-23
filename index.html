@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DICOM Viewer</title>
-    <link href="https://unpkg.com/cornerstone-core@2.3.0/dist/cornerstone.min.css" rel="stylesheet">
     <script src="https://unpkg.com/cornerstone-core@2.3.0/dist/cornerstone.min.js"></script>
     <script src="https://unpkg.com/dicom-parser/dist/dicomParser.min.js"></script>
     <script src="https://unpkg.com/cornerstone-wado-image-loader@4.13.2/dist/cornerstoneWADOImageLoader.bundle.min.js"></script>
@@ -31,9 +30,6 @@
         // Set dicomParser as an external dependency for cornerstoneWADOImageLoader
         cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
         cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
-        cornerstoneWADOImageLoader.configure({
-            beforeSend: function(xhr) { }
-        });
 
         function loadZipFile() {
             const zipFileInput = document.getElementById('zipFile');
@@ -200,8 +196,6 @@
                 // Update "window center" and "window width"
                 viewport.voi.windowCenter = windowCenter;
                 viewport.voi.windowWidth = windowWidth;
-    
-                console.log({ windowCenter, windowWidth });
     
                 // Apply updated viewport settings
                 cornerstone.setViewport(containerDiv, viewport);
