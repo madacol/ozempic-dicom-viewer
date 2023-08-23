@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DICOM Viewer</title>
+    <link href="https://unpkg.com/cornerstone-core@2.3.0/dist/cornerstone.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/cornerstone-core@2.3.0/dist/cornerstone.min.js"></script>
+    <script src="https://unpkg.com/dicom-parser/dist/dicomParser.min.js"></script>
+    <script src="https://unpkg.com/cornerstone-wado-image-loader@4.13.2/dist/cornerstoneWADOImageLoader.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+</head>
+<body>
+    <input type="file" id="zipFile" accept=".zip" onchange="loadZipFile()" />
+    <div id="seriesContainers"></div>
+    
+    <script>
+        // Set dicomParser as an external dependency for cornerstoneWADOImageLoader
+        cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
+        cornerstoneWADOImageLoader.external.dicomParser = dicomParser;
+        cornerstoneWADOImageLoader.configure({
+            beforeSend: function(xhr) { }
+        });
+
+        function loadZipFile() {
+            const zipFileInput = document.getElementById('zipFile');
+            const zipFile = zipFileInput.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(e) {
+                const zipData = e.target.result;
+                JSZip.loadAsync(zipData).then(processZip);
+            };
+
+            reader.readAsArrayBuffer(zipFile);
+        }
+
+        function processZip(zip) {
+            const seriesContainers = document.getElementById('seriesContainers');
+            seriesContainers.innerHTML = ''; // Clear existing containers
+
+            // Temporary storage for unsorted series data
+            const unsortedSeriesData = [];
+
+            // Use promises to handle asynchronous file reading
+            const promises = [];
+
+            // Iterate through ZIP entries
+            zip.forEach(function(relativePath, zipEntry) {
+                // Check if the entry is a file (not a directory)
+                if (!zipEntry.dir) {
+                    // Extract the series index and filename (modify as needed)
+                    const filepath_arr = relativePath.split('/');
+                    const filename = filepath_arr.pop();
+                    const seriesIndex = filepath_arr.pop().replace('SER', '') - 1;
+
+                    // Ensure unsortedSeriesData has an array for this series
+                    if (!unsortedSeriesData[seriesIndex]) {
+                        unsortedSeriesData[seriesIndex] = [];
+                    }
+
+                    // Read the file and store it in the unsortedSeriesData array, along with the filename
+                    const promise = zipEntry.async('arraybuffer').then(function(content) {
+                        unsortedSeriesData[seriesIndex].push({ filename: filename, content: content });
+                    });
+                    promises.push(promise);
+                }
+            });
+
+            // Wait for all file reads to complete
+            Promise.all(promises).then(async function() {
+                // Iterate through series data and create separate containers
+                unsortedSeriesData.forEach(function(series, index) {
+                    if (series) {
+                        // Sort the series based on filenames
+                        series.sort(function(a, b) {
+                            return a.filename.localeCompare(b.filename);
+                        });
+
+                        // Create container and controls for this series
+                        createSeriesContainer(series.map(slice => slice.content));
+                    }
+                });
+            });
+        }
+
+        async function createSeriesContainer(data) {
+            // Scope variables specific to this series
+            let currentSlice = 0;
+            let windowCenter = 0;
+            let windowWidth = 100;
+
+            const seriesContainers = document.getElementById('seriesContainers');
+
+            // Create a new container for this series
+            const containerDiv = document.createElement('div');
+            containerDiv.style.width = '512px';
+            containerDiv.style.height = '512px';
+            seriesContainers.appendChild(containerDiv);
+
+            // Variables for handling brightness and contrast adjustments
+            let isLeftMouseDown = false;
+            let lastMouseX = 0;
+            let lastMouseY = 0;
+
+            // Event listeners for wheel, mouse down, mouse move, and mouse up
+            containerDiv.addEventListener('wheel', function(event) {
+                event.preventDefault();
+                if (event.deltaY < 0) {
+                    changeSlice(-1);
+                } else {
+                    changeSlice(1);
+                }
+            });
+
+            containerDiv.addEventListener('mousedown', function(e) {
+                if (e.button === 0) { // Left mouse button
+                    isLeftMouseDown = true;
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                }
+            });
+
+            containerDiv.addEventListener('mousemove', function(e) {
+                if (isLeftMouseDown) {
+                    const deltaX = e.clientX - lastMouseX;
+                    const deltaY = e.clientY - lastMouseY;
+
+                    // Update brightness (window center) based on vertical mouse movement
+                    windowCenter += deltaY;
+
+                    // Update contrast (window width) based on horizontal mouse movement
+                    windowWidth += deltaX;
+
+                    // Apply updated brightness and contrast
+                    updateViewport(windowCenter, windowWidth);
+
+                    // Save current mouse position for next move event
+                    lastMouseX = e.clientX;
+                    lastMouseY = e.clientY;
+                }
+            });
+
+            containerDiv.addEventListener('mouseup', function(e) {
+                if (e.button === 0) { // Left mouse button
+                    isLeftMouseDown = false;
+                }
+            });
+
+
+            async function renderSeries(sliceIndex) {
+                cornerstone.enable(containerDiv);
+
+                // Retrieve DICOM file data for the specified series and slice
+                const dicomData = data[sliceIndex];
+
+                // Create a Blob URL to pass to Cornerstone
+                const blob = new Blob([dicomData], { type: 'application/dicom' });
+                const url = URL.createObjectURL(blob);
+
+                const image = await cornerstone.loadImage('wadouri:' + url)
+                cornerstone.displayImage(containerDiv, image);
+                cornerstone.reset(containerDiv);
+                updateViewport(windowCenter, windowWidth);
+
+                return image;
+            }
+    
+            // Change slice index and render new slice
+            function changeSlice(delta) {
+                if (data[currentSlice + delta]) {
+                    currentSlice += delta;
+                    renderSeries(currentSlice);
+                }
+            }
+    
+            function updateViewport(windowCenter, windowWidth) {
+                const viewport = cornerstone.getViewport(containerDiv);
+    
+                // Update window center and window width
+                viewport.voi.windowCenter = windowCenter;
+                viewport.voi.windowWidth = Math.max(windowWidth, 1); // Ensure window width is positive
+    
+                console.log({ windowCenter, windowWidth });
+    
+                // Apply updated viewport settings
+                cornerstone.setViewport(containerDiv, viewport);
+            }
+
+            // Initial render of the series
+            const image = await renderSeries(0);
+
+            windowCenter = image.windowCenter || 0; // Default value if not defined
+            windowWidth = image.windowWidth || 100; // Default value if not defined
+
+            // Apply initial viewport settings
+            updateViewport(windowCenter, windowWidth);
+        }
+
+        // Initialize file loading
+        loadZipFile();
+
+    </script>
+</body>
+</html>
