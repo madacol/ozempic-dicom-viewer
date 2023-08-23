@@ -98,12 +98,12 @@
             let windowCenter = 0;
             let windowWidth = 100;
 
-            const seriesContainers = document.getElementById('seriesContainers');
-
             // Create a new container for this series
             const containerDiv = document.createElement('div');
             containerDiv.style.width = '512px';
             containerDiv.style.height = '512px';
+
+            const seriesContainers = document.getElementById('seriesContainers');
             seriesContainers.appendChild(containerDiv);
 
             // Variables for handling window center and "window width" adjustments
@@ -111,7 +111,8 @@
             let lastMouseX = 0;
             let lastMouseY = 0;
 
-            // Event listeners for wheel, mouse down, mouse move, and mouse up
+            // Event listeners for mouse interactions: wheel, mouse down, mouse move, and mouse up
+
             containerDiv.addEventListener('wheel', function(event) {
                 event.preventDefault();
                 if (event.deltaY > 0) {
