@@ -98,7 +98,7 @@
             containerDiv.style.height = '512px';
             seriesContainers.appendChild(containerDiv);
 
-            // Variables for handling brightness and contrast adjustments
+            // Variables for handling window center and "window width" adjustments
             let isLeftMouseDown = false;
             let lastMouseX = 0;
             let lastMouseY = 0;
@@ -126,13 +126,13 @@
                     const deltaX = e.clientX - lastMouseX;
                     const deltaY = e.clientY - lastMouseY;
 
-                    // Update brightness (window center) based on vertical mouse movement
+                    // Update "window center" based on vertical mouse movement
                     windowCenter += deltaY;
 
-                    // Update contrast (window width) based on horizontal mouse movement
+                    // Update "window width" based on horizontal mouse movement
                     windowWidth += deltaX;
 
-                    // Apply updated brightness and contrast
+                    // Apply updated "window center" and "window width"
                     updateViewport(windowCenter, windowWidth);
 
                     // Save current mouse position for next move event
