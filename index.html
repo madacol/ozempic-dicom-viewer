@@ -92,7 +92,7 @@
             });
         }
 
-        async function createSeriesContainer(data) {
+        async function createSeriesContainer(files) {
             // Scope variables specific to this series
             let currentSlice = 0;
             let windowCenter = 0;
@@ -160,11 +160,11 @@
             });
 
 
-            async function renderSeries(sliceIndex) {
+            async function renderSlice(sliceIndex) {
                 cornerstone.enable(containerDiv);
 
                 // Retrieve DICOM file data for the specified series and slice
-                const dicomData = data[sliceIndex];
+                const dicomData = files[sliceIndex]
 
                 // Create a Blob URL to pass to Cornerstone
                 const blob = new Blob([dicomData], { type: 'application/dicom' });
@@ -179,9 +179,9 @@
     
             // Change slice index and render new slice
             async function changeSlice(delta) {
-                if (data[currentSlice + delta]) {
+                if (files[currentSlice + delta]) {
                     currentSlice += delta;
-                    await renderSeries(currentSlice);
+                    await renderSlice(currentSlice);
                     updateViewport(windowCenter, windowWidth);
                 }
             }
@@ -198,7 +198,7 @@
             }
 
             // Initial render of the series
-            const image = await renderSeries(0);
+            const image = await renderSlice(0);
 
             windowCenter = image.windowCenter || 0; // Default value if not defined
             windowWidth = image.windowWidth || 100; // Default value if not defined
