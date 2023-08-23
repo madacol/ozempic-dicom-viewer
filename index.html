@@ -144,9 +144,13 @@
 
                     // Update "window center" based on vertical mouse movement
                     windowCenter += deltaY;
+                    // Ensure "window center" is positive
+                    if (windowCenter < 0) windowCenter = 0;
 
                     // Update "window width" based on horizontal mouse movement
                     windowWidth += deltaX;
+                    // Ensure "window width" is positive
+                    if (windowWidth < 0) windowWidth = 0;
 
                     // Apply updated "window center" and "window width"
                     updateViewport(windowCenter, windowWidth);
@@ -193,9 +197,9 @@
             function updateViewport(windowCenter, windowWidth) {
                 const viewport = cornerstone.getViewport(containerDiv);
     
-                // Update window center and window width
+                // Update "window center" and "window width"
                 viewport.voi.windowCenter = windowCenter;
-                viewport.voi.windowWidth = Math.max(windowWidth, 1); // Ensure window width is positive
+                viewport.voi.windowWidth = windowWidth;
     
                 console.log({ windowCenter, windowWidth });
     
