@@ -9,6 +9,19 @@
     <script src="https://unpkg.com/dicom-parser/dist/dicomParser.min.js"></script>
     <script src="https://unpkg.com/cornerstone-wado-image-loader@4.13.2/dist/cornerstoneWADOImageLoader.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <style>
+        body {
+            margin: 3rem
+        }
+        #zipFile {
+            margin-bottom: 2rem;
+        }
+        #seriesContainers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 3rem;
+        }
+    </style>
 </head>
 <body>
     <input type="file" id="zipFile" accept=".zip" onchange="loadZipFile()" />
