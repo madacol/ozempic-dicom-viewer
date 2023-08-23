@@ -49,7 +49,7 @@
             seriesContainers.innerHTML = ''; // Clear existing containers
 
             // Temporary storage for unsorted series data
-            const unsortedSeriesData = [];
+            const unsortedSeriesData = {};
 
             // Use promises to handle asynchronous file reading
             const promises = [];
@@ -58,20 +58,18 @@
             zip.forEach(function(relativePath, zipEntry) {
                 // Check if the entry is a file (not a directory)
                 if (!zipEntry.dir) {
-                    // Extract the series index and filename (modify as needed)
+                    // Extract the series key and filename from the relative path
                     const filepath_arr = relativePath.split('/');
                     const filename = filepath_arr.pop();
-                    const seriesIndex = filepath_arr.pop().replace('SER', '') - 1;
+                    const serieKey = filepath_arr.pop();
 
                     // Ensure unsortedSeriesData has an array for this series
-                    if (!unsortedSeriesData[seriesIndex]) {
-                        unsortedSeriesData[seriesIndex] = [];
-                    }
+                    if (!unsortedSeriesData[serieKey]) unsortedSeriesData[serieKey] = [];
 
                     // Read the file and store it in the unsortedSeriesData array, along with the filename
                     const promise = zipEntry.async('arraybuffer').then(function(content) {
                         const fileData = { filename, content }
-                        unsortedSeriesData[seriesIndex].push(fileData);
+                        unsortedSeriesData[serieKey].push(fileData);
                     });
                     promises.push(promise);
                 }
@@ -80,18 +78,16 @@
             // Wait for all file reads to complete
             Promise.all(promises).then(async function() {
                 // Iterate through series data and create separate containers
-                unsortedSeriesData.forEach(function(series, index) {
-                    if (series) {
-                        // Sort the series based on filenames
-                        series.sort(function(a, b) {
-                            return a.filename.localeCompare(b.filename);
-                        });
+                Object.entries(unsortedSeriesData).forEach(([_serieKey, serie]) => {
+                    // Sort the series based on filenames
+                    serie.sort(function(a, b) {
+                        return a.filename.localeCompare(b.filename);
+                    });
 
-                        const data = series.map(slice => slice.content)
+                    const files = serie.map(slice => slice.content)
 
-                        // Create container and controls for this series
-                        createSeriesContainer(data);
-                    }
+                    // Create container and controls for this series
+                    createSeriesContainer(files);
                 });
             });
         }
