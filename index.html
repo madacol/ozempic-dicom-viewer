@@ -177,16 +177,16 @@
                 const image = await cornerstone.loadImage('wadouri:' + url)
                 cornerstone.displayImage(containerDiv, image);
                 cornerstone.reset(containerDiv);
-                updateViewport(windowCenter, windowWidth);
 
                 return image;
             }
     
             // Change slice index and render new slice
-            function changeSlice(delta) {
+            async function changeSlice(delta) {
                 if (data[currentSlice + delta]) {
                     currentSlice += delta;
-                    renderSeries(currentSlice);
+                    await renderSeries(currentSlice);
+                    updateViewport(windowCenter, windowWidth);
                 }
             }
     
