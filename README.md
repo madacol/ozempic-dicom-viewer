@@ -1,7 +1,7 @@
 
 # Ozempic DICOM Viewer
 
-This is a web-based DICOM (Digital Imaging and Communications in Medicine) viewer that allows users to upload a ZIP file containing DICOM images, and then interactively view and adjust the images.
+This is a web-based DICOM (Digital Imaging and Communications in Medicine) viewer that allows users to upload a ZIP file containing DICOM images, and then interactively view and adjust them.
 
 ### How to Use
 
