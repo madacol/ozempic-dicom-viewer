@@ -1,7 +1,7 @@
 
 # Ozempic DICOM Viewer
 
-This is a single HTML file to view DICOM MRI/CT scan results.
+This is a web-based DICOM (Digital Imaging and Communications in Medicine) viewer that allows users to upload a ZIP file containing DICOM images, and then interactively view and adjust the images.
 
 ### How to Use
 
