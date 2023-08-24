@@ -20,6 +20,10 @@
             flex-wrap: wrap;
             gap: 3rem;
         }
+        #seriesContainers > div {
+            overflow: auto;
+            resize: both;
+        }
     </style>
 </head>
 <body>
@@ -151,6 +155,9 @@
                     // Save current mouse position for next move event
                     lastMouseX = e.clientX;
                     lastMouseY = e.clientY;
+
+                    cornerstone.resize(containerDiv);
+
                 }
             });
 
