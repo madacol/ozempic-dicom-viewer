@@ -12,7 +12,11 @@
         body {
             margin: 3rem
         }
+        .header {
+            text-align: center;
+        }
         #zipFile {
+            margin: auto;
             margin-bottom: 2rem;
         }
         #seriesContainers {
@@ -24,12 +28,37 @@
             overflow: auto;
             resize: both;
         }
+        hr {
+            margin: 3rem;
+        }
+        .instructions {
+            max-width: 50rem;
+            margin: auto;
+        }
+        li {
+            margin-bottom: 1rem;
+        }
+
     </style>
 </head>
 <body>
-    <input type="file" id="zipFile" accept=".zip" onchange="loadZipFile()" />
+    <div class="header">
+        <h1>Load ZIP file</h1>
+        <input type="file" id="zipFile" accept=".zip" onchange="loadZipFile()" />
+    </div>
     <div id="seriesContainers"></div>
-    
+
+    <hr>
+    <div class="instructions">
+        <h1>How to Use</h1>
+        <ol>
+            <li><strong>Load ZIP File:</strong> The ZIP file must contain each series in a separate folder, with the DICOM files inside (slices) ordered by their filename. Highly nested folders supported 😉</li>
+            <li><strong>Scroll Through Slices:</strong> Use the mouse wheel to navigate through the slices of each series.</li>
+            <li><strong>Drag to adjust Window-center and Window-width:</strong> Hold down the left mouse button and drag horizontally to adjust the window width and vertically to adjust the window center.</li>
+            <li><strong>Resize each series:</strong> Drag the bottom-right corner of each series container to resize it.</li>
+        </ol>
+    </div>
+
     <script>
         // Set dicomParser as an external dependency for cornerstoneWADOImageLoader
         cornerstoneWADOImageLoader.external.cornerstone = cornerstone;
