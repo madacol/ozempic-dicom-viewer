@@ -200,6 +200,77 @@
                 }
             });
 
+            /**
+             * Let's now support mobile devices!
+             */
+
+            // Let's add support for moving slices by swiping up/down
+
+            let lastTouchY = 0;
+            let lastTouchX = 0;
+
+            containerDiv.addEventListener('touchstart', function(e) {
+                lastTouchY = e.touches[0].clientY;
+                lastTouchX = e.touches[0].clientX;
+            });
+
+            containerDiv.addEventListener('touchmove', function(e) {
+                const deltaY = e.touches[0].clientY - lastTouchY;
+                const deltaX = e.touches[0].clientX - lastTouchX;
+
+                // Update "currentSlice" based on vertical mouse movement
+                changeSlice(-deltaY/15);
+                console.log(deltaY/15);
+
+                // Update "window width" based on horizontal mouse movement
+                windowWidth += deltaX;
+                // Ensure "window width" is positive
+                if (windowWidth < 0) windowWidth = 0;
+
+                // Apply updated "window width"
+                updateViewport(windowCenter, windowWidth);
+
+                // Save current mouse position for next move event
+                lastTouchY = e.touches[0].clientY;
+                lastTouchX = e.touches[0].clientX;
+
+                cornerstone.resize(containerDiv);
+                e.preventDefault();
+            });
+
+            // Let's add support for moving slices by pinching in/out
+
+            let lastPinchDistance = 0;
+
+            containerDiv.addEventListener('touchstart', function(e) {
+                if (e.touches.length === 2) {
+                    lastPinchDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+                }
+            });
+
+            containerDiv.addEventListener('touchmove', function(e) {
+                if (e.touches.length === 2) {
+                    const newPinchDistance = Math.hypot(
+                        e.touches[0].clientX - e.touches[1].clientX,
+                        e.touches[0].clientY - e.touches[1].clientY
+                    );
+
+                    const deltaPinchDistance = newPinchDistance - lastPinchDistance;
+
+                    // Update "window center" based on vertical mouse movement
+                    windowCenter -= deltaPinchDistance;
+                    // Ensure "window center" is positive
+                    if (windowCenter < 0) windowCenter = 0;
+
+                    // Apply updated "window center"
+                    updateViewport(windowCenter, windowWidth);
+
+                    lastPinchDistance = newPinchDistance;
+                }
+            });
 
             async function renderSlice(sliceIndex) {
                 cornerstone.enable(containerDiv);
@@ -220,9 +291,10 @@
     
             // Change slice index and render new slice
             async function changeSlice(delta) {
-                if (files[currentSlice + delta]) {
+                const roundedNewSlice = Math.round(currentSlice + delta);
+                if (files[roundedNewSlice]) {
                     currentSlice += delta;
-                    await renderSlice(currentSlice);
+                    await renderSlice(roundedNewSlice);
                     updateViewport(windowCenter, windowWidth);
                 }
             }
