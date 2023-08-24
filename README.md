@@ -5,13 +5,13 @@ This is a web-based DICOM (Digital Imaging and Communications in Medicine) viewe
 
 ### How to Use
 
-1. **Load ZIP File:** The ZIP file must contain each series in a separate folder, with the DICOM files inside (the slices) ordered by their filename. Highly nested folders supported 😉
+1. **Load ZIP File:** The ZIP file must contain each series in a separate folder, with the DICOM images inside (the slices) ordered by their filename. Highly nested folders supported 😉
 
-2. **Scroll Through Slices:** Use the mouse wheel to navigate through the slices of each series.
+2. **Scroll Through Slices:** Use the mouse wheel to navigate through the slices.
 
 3. **Drag to adjust Window-center and Window-width:** Hold down the left mouse button and drag horizontally to adjust the window width and vertically to adjust the window center.
 
-4. **Resize each series:** Drag the bottom-right corner of each series container to resize it.
+4. **Resize:** Drag the bottom-right corner of each series container to resize it.
 
 ### Requirements
 
