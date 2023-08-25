@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ozempic MRI/CT scan viewer</title>
+    <title>DICOM viewer</title>
     <script src="https://unpkg.com/cornerstone-core@2.3.0/dist/cornerstone.min.js"></script>
     <script src="https://unpkg.com/dicom-parser/dist/dicomParser.min.js"></script>
     <script src="https://unpkg.com/cornerstone-wado-image-loader@4.13.2/dist/cornerstoneWADOImageLoader.bundle.min.js"></script>
@@ -11,9 +11,9 @@
     <style>
         body {
             margin: 3rem;
+            text-align: center;
         }
         .header {
-            text-align: center;
             max-width: 50rem;
             margin: auto;
         }
@@ -34,6 +34,7 @@
             margin: 3rem;
         }
         .instructions {
+            text-align: start;
             max-width: 50rem;
             margin: auto;
         }
@@ -41,7 +42,6 @@
             margin-bottom: 1rem;
         }
         .footer {
-            text-align: center;
             max-width: 50rem;
             margin: auto;
         }
@@ -49,7 +49,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Ozempic MRI/CT scan viewer</h1>
+        <h1>MRI/CT scan viewer</h1>
         <h2>Load ZIP with DICOM images</h3>
         <input type="file" id="zipFile" accept=".zip" onchange="loadZipFile()" />
     </div>
