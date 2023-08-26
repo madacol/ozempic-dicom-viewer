@@ -21,10 +21,10 @@ This is a web-based DICOM (Digital Imaging and Communications in Medicine) viewe
 
 ### Dependencies
 
-- <a href="https://github.com/cornerstonejs/cornerstone" target="_new">Cornerstone</a>: A library for displaying interactive medical images.
+- [cornerstonejs](https://github.com/cornerstonejs):
+  - [cornerstone](https://github.com/cornerstonejs/cornerstone): A library for displaying interactive medical images.
+  - [dicomParser](https://github.com/cornerstonejs/dicomParser): A lightweight library to parse DICOM P10 byte streams.
+  - [cornerstoneWADOImageLoader](https://github.com/cornerstonejs/cornerstoneWADOImageLoader): DICOM WADO Image Loader for the cornerstone library.
 
-- <a href="https://github.com/cornerstonejs/dicomParser" target="_new">dicomParser</a>: A lightweight library to parse DICOM P10 byte streams.
 
-- <a href="https://github.com/cornerstonejs/cornerstoneWADOImageLoader" target="_new">cornerstoneWADOImageLoader</a>: A library to load DICOM P10 instances over HTTP.
-
-- <a href="https://github.com/Stuk/jszip" target="_new">JSZip</a>: A library to read, create, and manipulate ZIP files.
+- [JSZip](https://github.com/Stuk/jszip): A library to read, create, and manipulate ZIP files.
